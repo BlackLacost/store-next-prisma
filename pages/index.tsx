@@ -1,19 +1,25 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
+import { ProductsService } from '../components/Products/products.service'
 
-const products = [
-  { id: 1, title: 'iPhone 5', price: 65000 },
-  { id: 2, title: 'iPhone 4xs', price: 45000 },
-  { id: 3, title: 'Poco x3 nfc', price: 15000 },
-]
-export const getStaticProps: GetServerSideProps = async (context) => {
-  return {
-    props: { products },
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const products = await ProductsService.findAll()
+    return {
+      props: { products },
+    }
+  } catch (e: any) {
+    console.log(e)
+    throw new Error(e)
   }
 }
 
 type HomeProps = {
-  products: typeof products
+  products: {
+    id: number
+    title: string
+    price: number
+  }[]
 }
 
 const Home: NextPage<HomeProps> = (props) => {
