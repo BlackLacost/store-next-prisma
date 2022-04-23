@@ -1,11 +1,18 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { ProductsService } from '../components/Products/products.service'
+import { prisma } from '../../lib/prisma'
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { slug } = query
   try {
-    const products = await ProductsService.findAll()
+    const products = await prisma.product.findMany({
+      where: {
+        category: {
+          slug: slug as string,
+        },
+      },
+    })
     return {
       props: { products },
     }
@@ -15,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-type HomeProps = {
+type CategoryProps = {
   products: {
     id: number
     title: string
@@ -24,7 +31,7 @@ type HomeProps = {
   }[]
 }
 
-const Home: NextPage<HomeProps> = (props) => {
+const CategoryPage: NextPage<CategoryProps> = (props) => {
   const { products } = props
   return (
     <div>
@@ -54,4 +61,4 @@ const Home: NextPage<HomeProps> = (props) => {
   )
 }
 
-export default Home
+export default CategoryPage
