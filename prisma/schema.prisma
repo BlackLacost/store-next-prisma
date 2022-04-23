@@ -11,6 +11,6 @@ generator client {
 
 model Product {
   id    Int    @id @default(autoincrement())
-  title String @db.VarChar(255)
+  title String @unique @db.VarChar(255)
   price Int
 }

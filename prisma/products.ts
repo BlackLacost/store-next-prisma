@@ -1,0 +1,10 @@
+import faker from '@faker-js/faker'
+import { Product } from '@prisma/client'
+
+export function genProducts(count: number): Omit<Product, 'id'>[] {
+  const products = [...Array(count)].map(() => ({
+    title: faker.commerce.productName(),
+    price: Number(faker.commerce.price()),
+  }))
+  return products
+}
