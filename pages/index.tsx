@@ -1,5 +1,6 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
+import Image from 'next/image'
 import { ProductsService } from '../components/Products/products.service'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -19,6 +20,7 @@ type HomeProps = {
     id: number
     title: string
     price: number
+    image: string
   }[]
 }
 
@@ -37,6 +39,12 @@ const Home: NextPage<HomeProps> = (props) => {
           {products.map((product) => (
             <li className="p-4" key={product.id}>
               <h2 className="text-3xl font-semibold">{product.title}</h2>
+              <Image
+                src={product.image}
+                alt={product.title}
+                width={300}
+                height={300}
+              />
               <p>Цена: {product.price} руб.</p>
             </li>
           ))}

@@ -13,4 +13,5 @@ model Product {
   id    Int    @id @default(autoincrement())
   title String @unique @db.VarChar(255)
   price Int
+  image String
 }
