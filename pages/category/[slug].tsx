@@ -3,8 +3,10 @@ import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Router from 'next/router'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { API } from '../../api/axios'
+import Modal from '../../components/Modal'
 import {
   ProductCreate,
   productCreateSchema,
@@ -13,6 +15,7 @@ import { prisma } from '../../lib/prisma'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug } = query
+
   try {
     const products = await prisma.product.findMany({
       where: {
@@ -46,6 +49,7 @@ type CategoryProps = {
 
 const CategoryPage: NextPage<CategoryProps> = (props) => {
   const { products, category } = props
+  const [modalActive, setModalActive] = useState<boolean>(false)
   const {
     reset,
     register,
@@ -64,43 +68,55 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
     await API.Products.create(data)
     reset()
     Router.push(`/category/${category.slug}`)
+    setModalActive(false)
   }
 
   return (
     <div>
       <Head>
         <title>Интерент магазин</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         <meta name="description" content="Интернет магазин для портфолио" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="container mx-auto">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <p>{errors.title?.message}</p>
-          <input
-            {...register('title', { required: true })}
-            type="text"
-            placeholder="Название продукта"
-          />
-          <p>{errors.price?.message}</p>
-          <input
-            {...register('price', { required: true })}
-            type="number"
-            placeholder="Цена"
-          />
-          <p>{errors.image?.message}</p>
-          <input
-            {...register('image', { required: true })}
-            type="url"
-            placeholder="Ссылка на картинку"
-          />
-          <input
-            {...register('categoryId', { required: true })}
-            type="hidden"
-            value={category.id}
-          />
-          <button type="submit">Создать</button>
-        </form>
+        <Modal active={modalActive} setActive={setModalActive}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <p>{errors.title?.message}</p>
+            <input
+              {...register('title', { required: true })}
+              type="text"
+              placeholder="Название продукта"
+            />
+            <p>{errors.price?.message}</p>
+            <input
+              {...register('price', { required: true })}
+              type="number"
+              placeholder="Цена"
+            />
+            <p>{errors.image?.message}</p>
+            <input
+              {...register('image', { required: true })}
+              type="url"
+              placeholder="Ссылка на картинку"
+            />
+            <input
+              {...register('categoryId', { required: true })}
+              type="hidden"
+              value={category.id}
+            />
+            <button type="submit">Создать</button>
+          </form>
+        </Modal>
+        <button
+          className="w-10 h-10 border-2 border-black rounded-full"
+          type="button"
+          onClick={() => setModalActive(true)}
+        >
+          +
+        </button>
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
             <li className="p-4" key={product.id}>
