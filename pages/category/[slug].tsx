@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -38,6 +39,7 @@ type CategoryProps = {
   products: {
     id: number
     title: string
+    slug: string
     price: number
     image: string
   }[]
@@ -65,10 +67,10 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
     },
   })
   const onSubmit = async (data: any) => {
-    await API.Products.create(data)
+    const response = await API.Products.create(data)
     reset()
-    Router.push(`/category/${category.slug}`)
     setModalActive(false)
+    Router.push(`/product/${response.data.result.slug}`)
   }
 
   return (
@@ -120,7 +122,11 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
             <li className="p-4" key={product.id}>
-              <h2 className="text-3xl font-semibold">{product.title}</h2>
+              <Link href={`/product/${product.slug}`} passHref>
+                <a>
+                  <h2 className="text-3xl font-semibold">{product.title}</h2>
+                </a>
+              </Link>
               <Image
                 src={product.image}
                 alt={product.title}

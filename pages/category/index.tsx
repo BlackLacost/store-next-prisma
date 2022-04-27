@@ -39,7 +39,7 @@ const CategoriesPage: NextPage<CategoriesProps> = (props) => {
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {categories.map((category) => (
             <li key={category.id}>
-              <Link href={`category/${category.slug}`} passHref>
+              <Link href={`/category/${category.slug}`} passHref>
                 <a>
                   <h2 className="text-3xl font-semibold">{category.title}</h2>
                   <Image

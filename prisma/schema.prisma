@@ -12,6 +12,7 @@ generator client {
 model Product {
   id         Int      @id @default(autoincrement())
   title      String   @unique @db.VarChar(255)
+  slug       String   @unique @db.VarChar(255)
   price      Int
   image      String
   category   Category @relation(fields: [categoryId], references: [id])
