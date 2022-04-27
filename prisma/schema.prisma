@@ -15,8 +15,10 @@ model Product {
   slug       String   @unique @db.VarChar(255)
   price      Int
   image      String
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId Int
+
+  @@index([categoryId])
 }
 
 model Category {
