@@ -11,7 +11,7 @@ import Modal from '../../components/Modal'
 import {
   ProductCreate,
   productCreateSchema,
-} from '../../components/Products/create-product.schema'
+} from '../../components/Products/product.schemas'
 import { prisma } from '../../lib/prisma'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {

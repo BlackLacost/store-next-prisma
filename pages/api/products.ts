@@ -1,15 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { productCreateSchema } from '../../components/Products/create-product.schema'
+import {
+  productCreateSchema,
+  productUpdateSchema,
+} from '../../components/Products/product.schemas'
 import { ProductsService } from '../../components/Products/products.service'
-import { validate } from '../../middleware/validate'
+import { validate } from '../../utils/validate'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method } = req
+  const { method, body } = req
 
   switch (method) {
     case 'POST':
       try {
-        const result = await ProductsService.create(req.body)
+        validate(productCreateSchema, body)
+        const result = await ProductsService.create(body)
         res.status(201).json({ result })
         break
       } catch (err: any) {
@@ -19,7 +23,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     case 'PUT':
       try {
-        const result = await ProductsService.update(req.body.id, req.body)
+        validate(productUpdateSchema, body)
+        const result = await ProductsService.update(body.id, body)
         res.status(201).json({ result })
         break
       } catch (err: any) {
@@ -34,4 +39,5 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default validate(productCreateSchema, handler)
+// export default validate(productCreateSchema, handler)
+export default handler

@@ -6,6 +6,13 @@ export const productCreateSchema = object({
   image: string().required().url(),
   categoryId: number().required(),
 })
-
-// type ProductCreate = TypeOf<typeof productCreateSchema>
 export interface ProductCreate extends TypeOf<typeof productCreateSchema> {}
+
+export const productUpdateSchema = object({
+  id: number().required().min(1),
+  title: string().optional(),
+  price: number().optional().min(0).max(1000000),
+  image: string().optional().url(),
+  categoryId: number().optional(),
+})
+export interface ProductUpdate extends TypeOf<typeof productUpdateSchema> {}

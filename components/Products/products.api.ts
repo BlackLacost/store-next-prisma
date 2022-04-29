@@ -1,7 +1,7 @@
 import { Product } from '@prisma/client'
 import { AxiosResponse } from 'axios'
 import { instance } from '../../api/axios'
-import { ProductCreate } from './create-product.schema'
+import { ProductCreate } from './product.schemas'
 
 const prefix = 'products'
 
