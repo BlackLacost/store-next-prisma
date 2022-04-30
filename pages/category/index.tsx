@@ -3,17 +3,12 @@ import type { GetServerSideProps, NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { HeadSeo } from '../../components/HeadSeo'
-import { prisma } from '../../lib/prisma'
+import { ProductsAPI } from '../../components/Products/products.api'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const categories = await prisma.category.findMany()
-    return {
-      props: { categories },
-    }
-  } catch (e: any) {
-    console.log(e)
-    throw new Error(e)
+  const categories = await ProductsAPI.getCategories()
+  return {
+    props: { categories },
   }
 }
 

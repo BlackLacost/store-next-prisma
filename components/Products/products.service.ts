@@ -1,4 +1,4 @@
-import { Prisma, Product } from '@prisma/client'
+import { Category, Prisma, Product } from '@prisma/client'
 import { prisma } from '../../lib/prisma'
 
 const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
@@ -33,5 +33,9 @@ export const ProductsService = {
       where: { id },
       data: productUpdate,
     })
+  },
+
+  findAllCategories(): Promise<Category[] | null> {
+    return prisma.category.findMany()
   },
 }
