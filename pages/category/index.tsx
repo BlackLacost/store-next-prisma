@@ -1,30 +1,27 @@
-import { Category } from '@prisma/client'
 import type { GetServerSideProps, NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { dehydrate, QueryClient } from 'react-query'
 import { HeadSeo } from '../../components/HeadSeo'
 import { ProductsAPI } from '../../components/Products/products.api'
+import { useGetCategories } from '../../components/Products/products.hooks'
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const categories = await ProductsAPI.getCategories()
-  return {
-    props: { categories },
-  }
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery('categories', ProductsAPI.getCategories)
+  return { props: { dehydratedState: dehydrate(queryClient) } }
 }
 
-type CategoriesProps = {
-  categories: Category[]
-}
+const CategoriesPage: NextPage = () => {
+  const queryCategories = useGetCategories()
 
-const CategoriesPage: NextPage<CategoriesProps> = (props) => {
-  const { categories } = props
   return (
     <>
       <HeadSeo />
 
       <main className="container mx-auto">
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {categories.map((category) => (
+          {queryCategories.data?.map((category) => (
             <li key={category.id}>
               <Link href={`/category/${category.slug}`} passHref>
                 <a>
