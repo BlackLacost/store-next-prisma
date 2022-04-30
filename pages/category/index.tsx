@@ -1,8 +1,8 @@
 import { Category } from '@prisma/client'
 import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { HeadSeo } from '../../components/HeadSeo'
 import { prisma } from '../../lib/prisma'
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -24,12 +24,8 @@ type CategoriesProps = {
 const CategoriesPage: NextPage<CategoriesProps> = (props) => {
   const { categories } = props
   return (
-    <div>
-      <Head>
-        <title>Интерент магазин</title>
-        <meta name="description" content="Интернет магазин для портфолио" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <HeadSeo />
 
       <main className="container mx-auto">
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -50,7 +46,7 @@ const CategoriesPage: NextPage<CategoriesProps> = (props) => {
           ))}
         </ul>
       </main>
-    </div>
+    </>
   )
 }
 

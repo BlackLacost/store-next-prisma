@@ -1,6 +1,6 @@
 import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
 import { useState } from 'react'
+import { HeadSeo } from '../../components/HeadSeo'
 import Modal from '../../components/Modal'
 import { CreateProduct } from '../../components/Products/CreateProductForm'
 import ProductList from '../../components/Products/ProductList'
@@ -25,32 +25,24 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
   const [modalActive, setModalActive] = useState<boolean>(false)
 
   return (
-    <div>
-      <Head>
-        <title>Интерент магазин</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <>
+      <HeadSeo />
 
-        <meta name="description" content="Интернет магазин для портфолио" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="container mx-auto">
-        <Modal active={modalActive} setActive={setModalActive}>
-          <CreateProduct
-            categoryId={categoryId}
-            setModalActive={setModalActive}
-          />
-        </Modal>
-        <button
-          className="w-10 h-10 border-2 border-black rounded-full"
-          type="button"
-          onClick={() => setModalActive(true)}
-        >
-          +
-        </button>
-        <ProductList products={products} />
-      </main>
-    </div>
+      <Modal active={modalActive} setActive={setModalActive}>
+        <CreateProduct
+          categoryId={categoryId}
+          setModalActive={setModalActive}
+        />
+      </Modal>
+      <button
+        className="w-10 h-10 border-2 border-black rounded-full"
+        type="button"
+        onClick={() => setModalActive(true)}
+      >
+        +
+      </button>
+      <ProductList products={products} />
+    </>
   )
 }
 
