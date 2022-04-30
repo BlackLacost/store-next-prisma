@@ -1,18 +1,10 @@
-import { yupResolver } from '@hookform/resolvers/yup'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import Router from 'next/router'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { slugify } from 'transliteration'
-import { API } from '../../api/axios'
 import Modal from '../../components/Modal'
-import {
-  ProductCreate,
-  productCreateSchema,
-} from '../../components/Products/product.schemas'
+import { CreateProduct } from '../../components/Products/CreateProductForm'
 import { prisma } from '../../lib/prisma'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
@@ -52,28 +44,7 @@ type CategoryProps = {
 
 const CategoryPage: NextPage<CategoryProps> = (props) => {
   const { products, category } = props
-  const [slug, setSlug] = useState<string>('')
   const [modalActive, setModalActive] = useState<boolean>(false)
-  const {
-    reset,
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<ProductCreate>({
-    resolver: yupResolver(productCreateSchema),
-    defaultValues: {
-      title: undefined,
-      price: undefined,
-      image: undefined,
-    },
-  })
-  const onSubmit = async (data: any) => {
-    const response = await API.Products.create(data)
-    reset()
-    setModalActive(false)
-    Router.push(`/product/${response.data.result.slug}`)
-  }
 
   return (
     <div>
@@ -87,36 +58,10 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
 
       <main className="container mx-auto">
         <Modal active={modalActive} setActive={setModalActive}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <p>{errors.title?.message}</p>
-            <input
-              {...register('title', { required: true })}
-              onChange={(e) => setSlug(slugify(e.target.value))}
-              type="text"
-              placeholder="Название продукта"
-            />
-            <p>{errors.price?.message}</p>
-            <input
-              {...register('price', { required: true })}
-              type="number"
-              placeholder="Цена"
-            />
-            <p>{errors.image?.message}</p>
-            <input
-              {...register('image', { required: true })}
-              type="url"
-              placeholder="Ссылка на картинку"
-            />
-            <button
-              type="submit"
-              onClick={() => {
-                setValue('slug', slug)
-                setValue('categoryId', category.id)
-              }}
-            >
-              Создать
-            </button>
-          </form>
+          <CreateProduct
+            categoryId={category.id}
+            setModalActive={setModalActive}
+          />
         </Modal>
         <button
           className="w-10 h-10 border-2 border-black rounded-full"
