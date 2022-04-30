@@ -1,13 +1,14 @@
-import { Product } from '@prisma/client'
+import { Category, Product } from '@prisma/client'
 import { instance } from '../../utils/axios'
 import { ProductCreate } from './product.schemas'
 import { ProductWithCategory } from './products.service'
 
-const prefix = 'products'
+const PRODUCTS = 'products'
+const CATEGORIES = 'categories'
 
 export const ProductsAPI = {
   async create(data: ProductCreate): Promise<Product> {
-    const response = await instance.post<Product>(`${prefix}/`, data)
+    const response = await instance.post<Product>(`${PRODUCTS}/`, data)
     return response.data
   },
 
@@ -15,13 +16,18 @@ export const ProductsAPI = {
     categorySlug: string,
   ): Promise<ProductWithCategory[]> {
     const response = await instance.get<{ items: ProductWithCategory[] }>(
-      `category/${categorySlug}/`,
+      `${CATEGORIES}/${categorySlug}/`,
     )
     return response.data.items
   },
 
   async getProductBySlug(slug: string): Promise<Product> {
-    const response = await instance.get<Product>(`${prefix}/${slug}/`)
+    const response = await instance.get<Product>(`${PRODUCTS}/${slug}/`)
+    return response.data
+  },
+
+  async getCategories(): Promise<Category[]> {
+    const response = await instance.get<Category[]>(`${CATEGORIES}/`)
     return response.data
   },
 }
