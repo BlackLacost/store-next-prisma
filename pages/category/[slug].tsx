@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { slugify } from 'transliteration'
 import { API } from '../../api/axios'
 import Modal from '../../components/Modal'
 import {
@@ -51,11 +52,13 @@ type CategoryProps = {
 
 const CategoryPage: NextPage<CategoryProps> = (props) => {
   const { products, category } = props
+  const [slug, setSlug] = useState<string>('')
   const [modalActive, setModalActive] = useState<boolean>(false)
   const {
     reset,
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ProductCreate>({
     resolver: yupResolver(productCreateSchema),
@@ -63,7 +66,6 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
       title: undefined,
       price: undefined,
       image: undefined,
-      categoryId: category.id,
     },
   })
   const onSubmit = async (data: any) => {
@@ -89,6 +91,7 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
             <p>{errors.title?.message}</p>
             <input
               {...register('title', { required: true })}
+              onChange={(e) => setSlug(slugify(e.target.value))}
               type="text"
               placeholder="Название продукта"
             />
@@ -104,12 +107,15 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
               type="url"
               placeholder="Ссылка на картинку"
             />
-            <input
-              {...register('categoryId', { required: true })}
-              type="hidden"
-              value={category.id}
-            />
-            <button type="submit">Создать</button>
+            <button
+              type="submit"
+              onClick={() => {
+                setValue('slug', slug)
+                setValue('categoryId', category.id)
+              }}
+            >
+              Создать
+            </button>
           </form>
         </Modal>
         <button
