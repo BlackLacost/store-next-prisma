@@ -1,27 +1,26 @@
 import type { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { dehydrate, QueryClient } from 'react-query'
 import { HeadSeo } from '../../components/HeadSeo'
 import Modal from '../../components/Modal'
 import { CreateProduct } from '../../components/Products/CreateProductForm'
 import ProductList from '../../components/Products/ProductList'
 import { ProductsAPI } from '../../components/Products/products.api'
-import { ProductWithCategory } from '../../components/Products/products.service'
+import { useGetProductsByCategorySlug } from '../../components/Products/products.hooks'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const slug = query.slug as string
-  const products = await ProductsAPI.getProductsByCategorySlug(slug)
-  return {
-    props: { products, categoryId: products[0].categoryId },
-  }
+  const categorySlug = query.slug as string
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery(['products', categorySlug], () =>
+    ProductsAPI.getProductsByCategorySlug(categorySlug),
+  )
+  return { props: { dehydratedState: dehydrate(queryClient) } }
 }
 
-type CategoryProps = {
-  products: ProductWithCategory[]
-  categoryId: number
-}
-
-const CategoryPage: NextPage<CategoryProps> = (props) => {
-  const { products, categoryId } = props
+const CategoryPage: NextPage = () => {
+  const { query } = useRouter()
+  const productsQuery = useGetProductsByCategorySlug(query.slug as string)
   const [modalActive, setModalActive] = useState<boolean>(false)
 
   return (
@@ -30,7 +29,7 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
 
       <Modal active={modalActive} setActive={setModalActive}>
         <CreateProduct
-          categoryId={categoryId}
+          categoryId={productsQuery.data ? productsQuery.data[0].categoryId : 1}
           setModalActive={setModalActive}
         />
       </Modal>
@@ -41,7 +40,7 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
       >
         +
       </button>
-      <ProductList products={products} />
+      <ProductList />
     </>
   )
 }

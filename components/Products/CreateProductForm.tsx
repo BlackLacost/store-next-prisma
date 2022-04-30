@@ -27,7 +27,7 @@ export function CreateProduct({ setModalActive, categoryId }: Props) {
       image: undefined,
     },
   })
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ProductCreate) => {
     const product = await ProductsAPI.create(data)
     reset()
     setModalActive(false)

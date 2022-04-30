@@ -35,7 +35,7 @@ export const ProductsService = {
     })
   },
 
-  findAllCategories(): Promise<Category[] | null> {
+  findAllCategories(): Promise<Category[]> {
     return prisma.category.findMany()
   },
 }
