@@ -1,10 +1,9 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
 import { useState } from 'react'
 import Modal from '../../components/Modal'
 import { CreateProduct } from '../../components/Products/CreateProductForm'
+import ProductList from '../../components/Products/ProductList'
 import { prisma } from '../../lib/prisma'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
@@ -70,24 +69,7 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
         >
           +
         </button>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <li className="p-4" key={product.id}>
-              <Link href={`/product/${product.slug}`} passHref>
-                <a>
-                  <h2 className="text-3xl font-semibold">{product.title}</h2>
-                </a>
-              </Link>
-              <Image
-                src={product.image}
-                alt={product.title}
-                width={300}
-                height={300}
-              />
-              <p>Цена: {product.price} руб.</p>
-            </li>
-          ))}
-        </ul>
+        <ProductList products={products} />
       </main>
     </div>
   )
