@@ -1,3 +1,4 @@
+import { Category } from '@prisma/client'
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -17,12 +18,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 type CategoriesProps = {
-  categories: {
-    id: string
-    title: string
-    image: string
-    slug: string
-  }[]
+  categories: Category[]
 }
 
 const CategoriesPage: NextPage<CategoriesProps> = (props) => {

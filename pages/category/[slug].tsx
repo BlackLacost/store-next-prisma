@@ -4,45 +4,24 @@ import { useState } from 'react'
 import Modal from '../../components/Modal'
 import { CreateProduct } from '../../components/Products/CreateProductForm'
 import ProductList from '../../components/Products/ProductList'
-import { prisma } from '../../lib/prisma'
+import { ProductsAPI } from '../../components/Products/products.api'
+import { ProductWithCategory } from '../../components/Products/products.service'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { slug } = query
-
-  try {
-    const products = await prisma.product.findMany({
-      where: {
-        category: {
-          slug: slug as string,
-        },
-      },
-      include: { category: { select: { id: true, slug: true } } },
-    })
-    return {
-      props: { products, category: products[0].category },
-    }
-  } catch (e: any) {
-    console.log(e)
-    throw new Error(e)
+  const slug = query.slug as string
+  const products = await ProductsAPI.getProductsByCategorySlug(slug)
+  return {
+    props: { products, categoryId: products[0].categoryId },
   }
 }
 
 type CategoryProps = {
-  products: {
-    id: number
-    title: string
-    slug: string
-    price: number
-    image: string
-  }[]
-  category: {
-    id: number
-    slug: string
-  }
+  products: ProductWithCategory[]
+  categoryId: number
 }
 
 const CategoryPage: NextPage<CategoryProps> = (props) => {
-  const { products, category } = props
+  const { products, categoryId } = props
   const [modalActive, setModalActive] = useState<boolean>(false)
 
   return (
@@ -58,7 +37,7 @@ const CategoryPage: NextPage<CategoryProps> = (props) => {
       <main className="container mx-auto">
         <Modal active={modalActive} setActive={setModalActive}>
           <CreateProduct
-            categoryId={category.id}
+            categoryId={categoryId}
             setModalActive={setModalActive}
           />
         </Modal>

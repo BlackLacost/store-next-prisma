@@ -12,14 +12,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (method === 'POST') {
     await validate(productCreateSchema, body)
-    const result = await ProductsService.create(body)
-    return res.status(201).json({ result })
+    const product = await ProductsService.create(body)
+    return res.status(201).json(product)
   }
 
   if (method === 'PUT') {
     await validate(productUpdateSchema, body)
-    const result = await ProductsService.update(body.id, body)
-    return res.status(201).json({ result })
+    const product = await ProductsService.update(body.id, body)
+    return res.status(201).json(product)
   }
 
   res.setHeader('Allow', ['POST, PUT'])

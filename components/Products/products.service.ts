@@ -1,9 +1,20 @@
 import { Prisma, Product } from '@prisma/client'
 import { prisma } from '../../lib/prisma'
 
+const productWithCategory = Prisma.validator<Prisma.ProductArgs>()({
+  include: { category: { select: { id: true, slug: true } } },
+})
+
+export type ProductWithCategory = Prisma.ProductGetPayload<
+  typeof productWithCategory
+>
+
 export const ProductsService = {
-  findAll(): Promise<Product[]> {
-    return prisma.product.findMany()
+  findAll(categorySlug?: string): Promise<ProductWithCategory[]> {
+    return prisma.product.findMany({
+      where: { category: { slug: categorySlug } },
+      include: { category: { select: { id: true, slug: true } } },
+    })
   },
 
   findProductBySlug(slug: string): Promise<Product | null> {

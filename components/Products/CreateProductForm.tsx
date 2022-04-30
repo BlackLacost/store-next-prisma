@@ -3,8 +3,8 @@ import Router from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { slugify } from 'transliteration'
-import { API } from '../../api/axios'
 import { ProductCreate, productCreateSchema } from './product.schemas'
+import { ProductsAPI } from './products.api'
 
 type Props = {
   setModalActive: Dispatch<SetStateAction<boolean>>
@@ -28,10 +28,10 @@ export function CreateProduct({ setModalActive, categoryId }: Props) {
     },
   })
   const onSubmit = async (data: any) => {
-    const response = await API.Products.create(data)
+    const product = await ProductsAPI.create(data)
     reset()
     setModalActive(false)
-    Router.push(`/product/${response.data.result.slug}`)
+    Router.push(`/product/${product.slug}`)
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

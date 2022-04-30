@@ -1,20 +1,12 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { ProductsService } from '../../components/Products/products.service'
+import { ProductsAPI } from '../../components/Products/products.api'
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { slug } = query
-
-  try {
-    const product = await ProductsService.findProductBySlug(slug as string)
-    return {
-      props: { product },
-    }
-  } catch (e: any) {
-    console.log(e)
-    throw new Error(e)
-  }
+  const slug = query.slug as string
+  const product = await ProductsAPI.getProductBySlug(slug)
+  return { props: { product } }
 }
 
 type ProductProps = {
